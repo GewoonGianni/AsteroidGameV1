@@ -1,0 +1,94 @@
+﻿TODO: refactor & add js docs
+
+Ship
+-xPos
+-yPos
+-xVel
+-yVel
+-img
+-Keyboardlistener
+-rotation
+-fireimg
+
+constructor(imgURL, xPos, yPos, 
+Xvel, yVel, KeyboardListener)
+
++move()
++draw()
+-loadImage()
+-degreeToRadian()
++collisionBox()
++fire()
++loadFireImage()
+
+
+Asteroid
+-xPos
+-yPos
+-xVel
+-yVel
+-img
+asteroid[]
+
+constructor(imgURL, xPos, yPos, 
+Xvel, yVel)
+
++move()?
++draw()?
+-loadImage()
++collisionBox()
+
+
+Startscreen
+-canvas
+-ctx
+
+constructor(canvas, ctx)
+
+-writeAsteroidImageToStartScreen() //
++writeTextToCanvas()
+-loadImage()
++DrawScreen()//?
+
+
+Levelscreen
+-canvas
+-ctx
+-scoreAmount
+-img
+-hit
+-asteroids[]
+
+constructor(canvas, ctx, lifes,
+score, imageURL)
+
++getLifes()
++drawScreen()?
+-drawtext()
+-drawLifes()
+-writeTextToCanvas()
+-loadImages()
++randomNumber()
+
+
+Highscorescreen
+-canvas
+-ctx
+-highscores
+-player
+-score
+
+constructor(canvas, ctx)
+
++drawScreen
++writeTextToCanvas
+
+
+Game
+(nothing to refactor)
+asks all screens
+
+
+Keyboardlistener
+(nothing to refactor)
+get used for stuff
