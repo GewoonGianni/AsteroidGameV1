@@ -5,6 +5,7 @@ class Asteroid {
     private xVel: number;
     private yVel: number;
     private img: HTMLImageElement;
+    asteroid: number[];
 
     /**
      * Construct a new Asteroid object.
@@ -82,5 +83,9 @@ class Asteroid {
         this.img = new Image();
         // Now, set the src to start loading the image
         this.img.src = source;
+    }
+
+    public collisionBox():Array<number> {
+        return [this.xPos, this.yPos, this.img.width / 2]
     }
 }

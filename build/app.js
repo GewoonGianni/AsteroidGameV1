@@ -29,6 +29,9 @@ class Asteroid {
         this.img = new Image();
         this.img.src = source;
     }
+    collisionBox() {
+        return [this.xPos, this.yPos, this.img.width / 2];
+    }
 }
 class Game {
     constructor(canvasId) {
@@ -37,6 +40,9 @@ class Game {
             this.currentscreen.drawScreen();
             if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_S)) {
                 this.currentscreen = this.levelscreen;
+            }
+            else if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_ESC) || this.levelscreen.getLifes() == 0) {
+                this.currentscreen = this.highscorescreen;
             }
             requestAnimationFrame(this.loop);
         };
@@ -50,20 +56,7 @@ class Game {
         this.startscreen = new Startscreen(this.canvas, this.ctx);
         this.keyboardlistener = new KeyboardListener();
         this.levelscreen = new levelscreen(this.canvas, this.ctx, 3, 4100, './assets/images/bengalcarrierforgameaslife.png');
-        this.highscores = [
-            {
-                playerName: "Loek",
-                score: 40000,
-            },
-            {
-                playerName: "Daan",
-                score: 34000,
-            },
-            {
-                playerName: "Rimmert",
-                score: 200,
-            },
-        ];
+        this.highscorescreen = new Highscorescreen(this.canvas, this.ctx);
         this.currentscreen = this.startscreen;
         this.loop();
     }
@@ -99,6 +92,45 @@ let init = () => {
     const Asteroids = new Game(document.getElementById("canvas"));
 };
 window.addEventListener("load", init);
+class Highscorescreen {
+    constructor(canvas, ctx) {
+        this.canvas = canvas;
+        this.ctx = ctx;
+        this.player = "Player one";
+        this.score = 400;
+        this.highscores = [
+            {
+                playerName: "Loek",
+                score: 40000,
+            },
+            {
+                playerName: "Daan",
+                score: 34000,
+            },
+            {
+                playerName: "Rimmert",
+                score: 200,
+            },
+        ];
+    }
+    drawScreen() {
+        const x = this.canvas.width / 2;
+        let y = this.canvas.height / 2;
+        this.writeTextToCanvas(`${this.player} score is ${this.score}`, 80, x, y - 100);
+        this.writeTextToCanvas("HIGHSCORES", 40, x, y);
+        for (let i = 0; i < this.highscores.length; i++) {
+            y += 40;
+            const text = `${i + 1}: ${this.highscores[i].playerName} - ${this.highscores[i].score}`;
+            this.writeTextToCanvas(text, 20, x, y);
+        }
+    }
+    writeTextToCanvas(text, fontSize = 20, xCoordinate, yCoordinate, alignment = "center", color = "white") {
+        this.ctx.font = `${fontSize}px Agency_bold`;
+        this.ctx.fillStyle = color;
+        this.ctx.textAlign = alignment;
+        this.ctx.fillText(text, xCoordinate, yCoordinate);
+    }
+}
 class KeyboardListener {
     constructor() {
         this.keyDown = (ev) => {
@@ -124,17 +156,6 @@ KeyboardListener.KEY_DOWN = 40;
 KeyboardListener.KEY_S = 83;
 class levelscreen {
     constructor(canvas, ctx, lifes, score, imageURL) {
-        this.loop = () => {
-            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            this.asteroids.forEach((asteroid) => {
-                asteroid.move(this.canvas);
-                asteroid.draw(this.ctx);
-            });
-            this.ship.move(this.canvas);
-            this.ship.draw(this.ctx);
-            this.drawScreen();
-            requestAnimationFrame(this.loop);
-        };
         this.canvas = canvas;
         this.ctx = ctx;
         this.lifes = lifes;
@@ -154,14 +175,35 @@ class levelscreen {
             const randomIndex = this.randomNumber(0, asteroidFilenames.length);
             this.asteroids.push(new Asteroid(asteroidFilenames[randomIndex], this.randomNumber(50, this.canvas.width - 121), this.randomNumber(50, this.canvas.height - 99), this.randomNumber(1, 10), this.randomNumber(1, 10)));
         }
+        this.hit = false;
+    }
+    getLifes() {
+        return this.lifes;
     }
     drawScreen() {
+        let hitCheckArray = [];
         this.asteroids.forEach((asteroid) => {
             asteroid.move(this.canvas);
             asteroid.draw(this.ctx);
+            let asteroidBox = asteroid.collisionBox();
+            let shipBox = this.ship.collisionBox();
+            let distance = Math.sqrt(((shipBox[0] - asteroidBox[0]) * (shipBox[0] - asteroidBox[0])) + ((shipBox[1] - asteroidBox[1]) * (shipBox[1] - asteroidBox[1])));
+            if (distance <= (shipBox[2] + asteroidBox[2]) && this.hit == false) {
+                this.lifes -= 1;
+                this.hit = true;
+            }
+            if (distance <= (shipBox[2] + asteroidBox[2])) {
+                hitCheckArray.push(1);
+            }
         });
         this.ship.move(this.canvas);
         this.ship.draw(this.ctx);
+        if (this.hit == true) {
+            this.ship.fire(this.ctx);
+        }
+        if (hitCheckArray[0] !== 1) {
+            this.hit = false;
+        }
         this.drawLifes();
         this.drawtext();
     }
@@ -196,6 +238,7 @@ class Ship {
         this.yVel = yVel;
         this.KeyboardListener = keyboardListener;
         this.loadImage(imgURL);
+        this.loadFireImage('./assets/images/explosion.png');
     }
     move(canvas) {
         if (this.KeyboardListener.isKeyDown(KeyboardListener.KEY_RIGHT)) {
@@ -237,6 +280,16 @@ class Ship {
     }
     degreeToRadion(degree) {
         return Math.PI / 180 * degree;
+    }
+    collisionBox() {
+        return [this.xPos, this.yPos, 80];
+    }
+    fire(ctx) {
+        ctx.drawImage(this.fireimg, this.xPos + this.img.width / 2 - 47.5, this.yPos + this.img.height / 2 - 47.5);
+    }
+    loadFireImage(source) {
+        this.fireimg = new Image();
+        this.fireimg.src = source;
     }
 }
 class Startscreen {

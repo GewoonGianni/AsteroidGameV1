@@ -21,6 +21,9 @@ class Game {
     // levelscreen
     private levelscreen: levelscreen;
 
+    // highscorescreen
+    private highscorescreen: Highscorescreen;
+
     // currentscreen
     private currentscreen: any;
 
@@ -46,22 +49,9 @@ class Game {
         // this.levelscreen = new levelscreen(this.canvas, this.ctx, 3, 4100, './assets/images/SpaceShooterRedux/PNG/UI/PlayerLIfe1_blue.png')
         this.levelscreen = new levelscreen(this.canvas, this.ctx, 3, 4100, './assets/images/bengalcarrierforgameaslife.png')
 
+        // make highscorescreen
+        this.highscorescreen = new Highscorescreen(this.canvas, this.ctx);
 
-
-        this.highscores = [
-            {
-                playerName: "Loek",
-                score: 40000,
-            },
-            {
-                playerName: "Daan",
-                score: 34000,
-            },
-            {
-                playerName: "Rimmert",
-                score: 200,
-            },
-        ];
         this.currentscreen = this.startscreen;
 
         this.loop();
@@ -76,6 +66,8 @@ class Game {
 
         if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_S)) {
             this.currentscreen = this.levelscreen;
+        } else if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_ESC) || this.levelscreen.getLifes() == 0 ) {
+            this.currentscreen = this.highscorescreen;
         }
         
         requestAnimationFrame(this.loop);

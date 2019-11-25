@@ -10,9 +10,11 @@ class levelscreen {
 
     private img: HTMLImageElement;
 
+    private hit: boolean;
+
     // Asteroids
     private asteroids: Asteroid[];
-    
+
 
     // ship
     private ship: Ship;
@@ -36,7 +38,7 @@ class levelscreen {
         this.loadImage(imageURL);
 
         // draw player ship
-        // this.ship = new Ship("./assets/images/SpaceShooterRedux/PNG/playerShip1_blue.png", this.canvas.width / 2, this.canvas.height / 2, 5, 5, new KeyboardListener())
+        // this.ship = new Ship("./assets/images/SpaceShooterRedux/PNG/playerShip1_blue.png", this.canvas.width / 2 - 22, this.canvas.height / 2 - 60, 8, 8, new KeyboardListener())
 
         this.ship = new Ship("./assets/images/bengalcarrierforgame.png", this.canvas.width / 2, this.canvas.height / 2, 5, 5, new KeyboardListener())
 
@@ -75,45 +77,51 @@ class levelscreen {
                 ),
             );
         }
+
+        this.hit = false;
+    }
+
+    public getLifes () {
+        return this.lifes;
     }
 
     public drawScreen() {
-        // Clear the canvas
-        
+        let hitCheckArray: Array<any> = [];
 
         // Move and draw all the game entities
         this.asteroids.forEach((asteroid) => {
             asteroid.move(this.canvas);
             asteroid.draw(this.ctx);
+
+            let asteroidBox = asteroid.collisionBox(); // [this.xPos, this.yPos, this.img.width / 2]
+
+            let shipBox = this.ship.collisionBox(); // [this.xPos, this.yPos, 80]
+
+            let distance = Math.sqrt(((shipBox[0] - asteroidBox[0]) * (shipBox[0] - asteroidBox[0])) + ((shipBox[1] - asteroidBox[1]) * (shipBox[1] - asteroidBox[1])));
+
+            if (distance <= (shipBox[2] + asteroidBox[2]) && this.hit == false) {
+                this.lifes -= 1;
+                this.hit = true;
+            }
+
+            if (distance <= (shipBox[2] + asteroidBox[2])) {
+                hitCheckArray.push(1)
+            }
         });
 
         this.ship.move(this.canvas);
         this.ship.draw(this.ctx);
+
+        if (this.hit == true) {
+            this.ship.fire(this.ctx);
+        }
+
+        if (hitCheckArray[0] !== 1) {
+            this.hit = false;
+        }
 
         this.drawLifes();
         this.drawtext();
-    }
-
-    /**
-     * Method game loop
-     */
-    public loop = () => {
-        // Clear the canvas
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-        // Move and draw all the game entities
-        this.asteroids.forEach((asteroid) => {
-            asteroid.move(this.canvas);
-            asteroid.draw(this.ctx);
-        });
-
-        this.ship.move(this.canvas);
-        this.ship.draw(this.ctx);
-
-        this.drawScreen();
-
-        // Request the next animation frame
-        requestAnimationFrame(this.loop);
     }
 
     private drawtext() {
@@ -122,7 +130,7 @@ class levelscreen {
 
     private drawLifes() {
         for (let i: number = 0; i < this.lifes; i++) {
-            this.ctx.drawImage(this.img, window.innerWidth / 20 + this.img.width  * i, window.innerHeight / 20);
+            this.ctx.drawImage(this.img, window.innerWidth / 20 + this.img.width * i, window.innerHeight / 20);
         }
     }
 

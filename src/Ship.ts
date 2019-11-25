@@ -6,6 +6,7 @@ class Ship {
     private img: HTMLImageElement;
     private KeyboardListener: KeyboardListener;
     private rotation: number = 0;
+    private fireimg: HTMLImageElement;
 
     /**
      * this is the constructor for the Ship class
@@ -22,6 +23,7 @@ class Ship {
         this.KeyboardListener = keyboardListener;
 
         this.loadImage(imgURL);
+        this.loadFireImage('./assets/images/explosion.png');
     }
 
     /**
@@ -88,5 +90,19 @@ class Ship {
 
     private degreeToRadion(degree: number) {
         return Math.PI / 180 * degree;
+    }
+
+    public collisionBox():Array<number> {
+        return [this.xPos, this.yPos, 80]
+    }
+
+    public fire(ctx: CanvasRenderingContext2D){
+        ctx.drawImage(this.fireimg, this.xPos + this.img.width / 2 - 47.5, this.yPos + this.img.height / 2 - 47.5)
+    }
+
+    private loadFireImage(source: string) {
+        this.fireimg = new Image();
+        // Now, set the src to start loading the image
+        this.fireimg.src = source;
     }
 }
