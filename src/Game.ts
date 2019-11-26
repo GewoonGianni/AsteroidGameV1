@@ -81,6 +81,9 @@ class Game {
             this.currentscreen = this.highscorescreen;
         } else if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_ESC)){
             this.currentscreen = this.pausescreen;
+        } 
+        if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_R)){
+            location.reload();
         }
         
         requestAnimationFrame(this.loop);

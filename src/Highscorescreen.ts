@@ -61,5 +61,7 @@ class Highscorescreen extends GameScreen{
                 }`;
             this.writeTextToCanvas(text, 20, x, y);
         }
+
+        this.writeTextToCanvas(`Press 'R' to restart`, 20, window.innerWidth / 2, window.innerHeight / 10 * 9, 'center', 'red')
     }
 }

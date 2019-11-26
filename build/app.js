@@ -61,6 +61,9 @@ class Game {
             else if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_ESC)) {
                 this.currentscreen = this.pausescreen;
             }
+            if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_R)) {
+                location.reload();
+            }
             requestAnimationFrame(this.loop);
         };
         this.canvas = canvasId;
@@ -145,6 +148,7 @@ class Highscorescreen extends GameScreen {
             const text = `${i + 1}: ${this.highscores[i].playerName} - ${this.highscores[i].score}`;
             this.writeTextToCanvas(text, 20, x, y);
         }
+        this.writeTextToCanvas(`Press 'R' to restart`, 20, window.innerWidth / 2, window.innerHeight / 10 * 9, 'center', 'red');
     }
 }
 class KeyboardListener {
@@ -170,6 +174,7 @@ KeyboardListener.KEY_UP = 38;
 KeyboardListener.KEY_RIGHT = 39;
 KeyboardListener.KEY_DOWN = 40;
 KeyboardListener.KEY_S = 83;
+KeyboardListener.KEY_R = 82;
 class levelscreen extends GameScreen {
     constructor(canvas, ctx, lifes, score, imageURL) {
         super(canvas, ctx);
@@ -309,7 +314,6 @@ class Ship extends GameEntity {
             && (this.yPos < (GameEntity.getYpos() + GameEntity.getIMGheight()))
             && ((this.xPos + this.img.width) > GameEntity.getXpos())
             && (this.xPos < (GameEntity.getXpos() + GameEntity.getIMGwidth()))) {
-            console.log('geraakt a neef pas op matje');
             return true;
         }
         return false;
