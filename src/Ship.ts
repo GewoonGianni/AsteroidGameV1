@@ -83,7 +83,6 @@ class Ship extends GameEntity{
         && (this.yPos < (GameEntity.getYpos() + GameEntity.getIMGheight())) 
         && ((this.xPos + this.img.width) > GameEntity.getXpos()) 
         && (this.xPos < (GameEntity.getXpos() + GameEntity.getIMGwidth()))){
-            console.log('geraakt a neef pas op matje')
             return true
         }
         return false
