@@ -42,7 +42,31 @@ class GameEntity {
         this.img.src = source;
     }
 
-    public collisionBox():Array<number> {
-        return [this.xPos, this.yPos, this.img.width / 2]
+    /**
+     * This function gets the Y position
+     */
+    public getYpos():number{
+        return this.yPos;
+    }
+
+    /**
+     * This function gets the X position
+     */
+    public getXpos():number{
+        return this.xPos;
+    }
+
+    /**
+     * This function gets the IMG height
+     */
+    public getIMGheight():number{
+        return this.img.height;
+    }
+
+    /**
+     * This function gets the IMG width
+     */
+    public getIMGwidth():number{
+        return this.img.width;
     }
 }

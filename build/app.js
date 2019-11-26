@@ -10,8 +10,17 @@ class GameEntity {
         this.img = new Image();
         this.img.src = source;
     }
-    collisionBox() {
-        return [this.xPos, this.yPos, this.img.width / 2];
+    getYpos() {
+        return this.yPos;
+    }
+    getXpos() {
+        return this.xPos;
+    }
+    getIMGheight() {
+        return this.img.height;
+    }
+    getIMGwidth() {
+        return this.img.width;
     }
 }
 class Asteroid extends GameEntity {
@@ -60,7 +69,7 @@ class Game {
         this.lives = 3;
         this.startscreen = new Startscreen(this.canvas, this.ctx);
         this.keyboardlistener = new KeyboardListener();
-        this.levelscreen = new levelscreen(this.canvas, this.ctx, 3, 4100, './assets/images/bengalcarrierforgameaslife.png');
+        this.levelscreen = new levelscreen(this.canvas, this.ctx, 10, 4100, './assets/images/health.png');
         this.highscorescreen = new Highscorescreen(this.canvas, this.ctx);
         this.currentscreen = this.startscreen;
         this.loop();
@@ -160,7 +169,8 @@ class levelscreen extends GameScreen {
         this.scoreAmount = score;
         this.source = imageURL;
         this.loadImage(imageURL);
-        this.ship = new Ship("./assets/images/bengalcarrierforgame.png", this.canvas.width / 2, this.canvas.height / 2, 5, 5, new KeyboardListener());
+        this.loadBarImage('./assets/images/healthbar.png');
+        this.ship = new Ship("./assets/images/avengerShip.png", this.canvas.width / 2, this.canvas.height / 2, 5, 5, new KeyboardListener());
         const asteroidFilenames = [
             "./assets/images/asteroids/asteroid1.png",
             "./assets/images/asteroids/asteroid2.png",
@@ -183,14 +193,11 @@ class levelscreen extends GameScreen {
         this.asteroids.forEach((asteroid) => {
             asteroid.move(this.canvas);
             asteroid.draw(this.ctx);
-            let asteroidBox = asteroid.collisionBox();
-            let shipBox = this.ship.collisionBox();
-            let distance = Math.sqrt(((shipBox[0] - asteroidBox[0]) * (shipBox[0] - asteroidBox[0])) + ((shipBox[1] - asteroidBox[1]) * (shipBox[1] - asteroidBox[1])));
-            if (distance <= (shipBox[2] + asteroidBox[2]) && this.hit == false) {
+            if (this.ship.isColliding(asteroid) == true && this.hit == false) {
                 this.lifes -= 1;
                 this.hit = true;
             }
-            if (distance <= (shipBox[2] + asteroidBox[2])) {
+            if (this.ship.isColliding(asteroid) == true) {
                 hitCheckArray.push(1);
             }
         });
@@ -209,13 +216,18 @@ class levelscreen extends GameScreen {
         this.writeTextToCanvas(`Score: ${this.scoreAmount}`, 20, window.innerWidth / 20 * 19, window.innerHeight / 20, "right", 'white');
     }
     drawLifes() {
+        this.ctx.drawImage(this.barimg, window.innerWidth / 20, window.innerHeight / 20);
         for (let i = 0; i < this.lifes; i++) {
-            this.ctx.drawImage(this.img, window.innerWidth / 20 + this.img.width * i, window.innerHeight / 20);
+            this.ctx.drawImage(this.img, window.innerWidth / 20 + 3 + 20 * i, window.innerHeight / 20 + 3);
         }
     }
     loadImage(source) {
         this.img = new Image();
         this.img.src = source;
+    }
+    loadBarImage(source) {
+        this.barimg = new Image();
+        this.barimg.src = source;
     }
     randomNumber(min, max) {
         return Math.round(Math.random() * (max - min) + min);
@@ -261,6 +273,16 @@ class Ship extends GameEntity {
             ctx.drawImage(this.img, this.xPos, this.yPos);
             ctx.restore();
         }
+    }
+    isColliding(GameEntity) {
+        if ((this.yPos + this.img.height > GameEntity.getYpos())
+            && (this.yPos < (GameEntity.getYpos() + GameEntity.getIMGheight()))
+            && ((this.xPos + this.img.width) > GameEntity.getXpos())
+            && (this.xPos < (GameEntity.getXpos() + GameEntity.getIMGwidth()))) {
+            console.log('geraakt a neef pas op matje');
+            return true;
+        }
+        return false;
     }
     degreeToRadion(degree) {
         return Math.PI / 180 * degree;

@@ -74,9 +74,16 @@ class Ship extends GameEntity{
 
     }
 
-    // public isColliding():boolean {
-
-    // }
+    public isColliding(GameEntity: GameEntity):boolean {
+        if ((this.yPos + this.img.height > GameEntity.getYpos()) 
+        && (this.yPos < (GameEntity.getYpos() + GameEntity.getIMGheight())) 
+        && ((this.xPos + this.img.width) > GameEntity.getXpos()) 
+        && (this.xPos < (GameEntity.getXpos() + GameEntity.getIMGwidth()))){
+            console.log('geraakt a neef pas op matje')
+            return true
+        }
+        return false
+    }
 
     private degreeToRadion(degree: number) {
         return Math.PI / 180 * degree;

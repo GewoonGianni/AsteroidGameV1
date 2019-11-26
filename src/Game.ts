@@ -47,13 +47,15 @@ class Game {
 
         //make levelscreen
         // this.levelscreen = new levelscreen(this.canvas, this.ctx, 3, 4100, './assets/images/SpaceShooterRedux/PNG/UI/PlayerLIfe1_blue.png')
-        this.levelscreen = new levelscreen(this.canvas, this.ctx, 3, 4100, './assets/images/bengalcarrierforgameaslife.png')
+        this.levelscreen = new levelscreen(this.canvas, this.ctx, 10, 4100, './assets/images/health.png')
 
         // make highscorescreen
         this.highscorescreen = new Highscorescreen(this.canvas, this.ctx);
 
+        //set first screen to the startscreen
         this.currentscreen = this.startscreen;
 
+        // the loop that runs this game
         this.loop();
     }
 
