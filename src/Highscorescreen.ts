@@ -65,6 +65,10 @@ class Highscorescreen extends GameScreen{
         this.writeTextToCanvas(`Press 'R' to restart`, 20, window.innerWidth / 2, window.innerHeight / 10 * 9, 'center', 'red')
     }
 
+    /**
+     * set the score
+     * @param score the score amount
+     */
     public setScore(score:number){
         this.score = score;
     }

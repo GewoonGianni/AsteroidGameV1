@@ -179,6 +179,9 @@ class levelscreen extends GameScreen{
         return Math.round(Math.random() * (max - min) + min);
     }
 
+    /**
+     * get the score
+     */
     public getScore(){
         return this.scoreAmount;
     }

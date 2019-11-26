@@ -24,6 +24,9 @@ class Pausescreen extends GameScreen {
         this.writeTextToCanvas(`Press 'S' to continue`, 20, window.innerWidth / 2, window.innerHeight / 10 * 9, 'center', 'white');
     }
 
+    /**
+     * draw the two stripes that look like a pause button
+     */
     private drawPause(){
         this.ctx.beginPath();
         this.ctx.lineWidth = 50;

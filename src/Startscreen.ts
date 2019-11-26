@@ -22,6 +22,10 @@ class Startscreen extends GameScreen{
         this.ctx.drawImage(img, x, y);
     }
 
+    /**
+     * the image will be loaded here
+     * @param source the path to the file
+     */
     private loadImage(source: string) {
         const imageElement = new Image();
 
@@ -30,6 +34,9 @@ class Startscreen extends GameScreen{
         return imageElement
     }
 
+    /**
+     * this will draw the whole start screen
+     */
     public drawScreen() {
         // // make the asteroids text
         // this.writeTextToCanvas('Asteroids', 100, window.innerWidth / 2, window.innerHeight / 5, 'center', 'white');
