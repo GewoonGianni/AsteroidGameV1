@@ -73,35 +73,6 @@ class Game {
         requestAnimationFrame(this.loop);
     }
 
-    // -------- Title screen methods -------------------------------------
-
-    /**
-     * Method to initialize the title screen
-     */
-    public titleScreen() {
-        const x = this.canvas.width / 2;
-        let y = this.canvas.height / 2;
-
-        // 1. draw your score
-        this.writeTextToCanvas(
-            `${this.player} score is ${this.score}`,
-            80,
-            x,
-            y - 100,
-        );
-
-        // 2. draw all highscores
-        this.writeTextToCanvas("HIGHSCORES", 40, x, y);
-
-        for (let i = 0; i < this.highscores.length; i++) {
-            y += 40;
-            const text = `${i + 1}: ${this.highscores[i].playerName} - ${
-                this.highscores[i].score
-                }`;
-            this.writeTextToCanvas(text, 20, x, y);
-        }
-    }
-
     // -------Generic canvas methods ----------------------------------
 
     /**

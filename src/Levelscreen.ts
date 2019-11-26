@@ -1,6 +1,5 @@
-class levelscreen {
-    private canvas: HTMLCanvasElement;
-    private ctx: CanvasRenderingContext2D;
+/// <reference path="GameScreen.ts"/>
+class levelscreen extends GameScreen{
 
     private lifes: number;
 
@@ -26,8 +25,7 @@ class levelscreen {
         score: number,
         imageURL: string,
     ) {
-        this.canvas = canvas;
-        this.ctx = ctx;
+        super(canvas, ctx)
 
         this.lifes = lifes;
 
@@ -88,7 +86,7 @@ class levelscreen {
     public drawScreen() {
         let hitCheckArray: Array<any> = [];
 
-        // Move and draw all the game entities
+        // Move and draw all the game entities, check if something is hitting the ship
         this.asteroids.forEach((asteroid) => {
             asteroid.move(this.canvas);
             asteroid.draw(this.ctx);
@@ -99,7 +97,7 @@ class levelscreen {
 
             let distance = Math.sqrt(((shipBox[0] - asteroidBox[0]) * (shipBox[0] - asteroidBox[0])) + ((shipBox[1] - asteroidBox[1]) * (shipBox[1] - asteroidBox[1])));
 
-            if (distance <= (shipBox[2] + asteroidBox[2]) && this.hit == false) {
+            if (distance <= (shipBox[2] + asteroidBox[2]) && this.hit == false){
                 this.lifes -= 1;
                 this.hit = true;
             }
@@ -132,20 +130,6 @@ class levelscreen {
         for (let i: number = 0; i < this.lifes; i++) {
             this.ctx.drawImage(this.img, window.innerWidth / 20 + this.img.width * i, window.innerHeight / 20);
         }
-    }
-
-    private writeTextToCanvas(
-        text: string,
-        fontSize: number = 20,
-        xCoordinate: number,
-        yCoordinate: number,
-        alignment: CanvasTextAlign = "center",
-        color: string = "white",
-    ) {
-        this.ctx.font = `${fontSize}px Agency_Bold`; // minecraft
-        this.ctx.fillStyle = color;
-        this.ctx.textAlign = alignment;
-        this.ctx.fillText(text, xCoordinate, yCoordinate);
     }
 
     private loadImage(source: string) {

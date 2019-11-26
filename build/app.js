@@ -60,17 +60,6 @@ class Game {
         this.currentscreen = this.startscreen;
         this.loop();
     }
-    titleScreen() {
-        const x = this.canvas.width / 2;
-        let y = this.canvas.height / 2;
-        this.writeTextToCanvas(`${this.player} score is ${this.score}`, 80, x, y - 100);
-        this.writeTextToCanvas("HIGHSCORES", 40, x, y);
-        for (let i = 0; i < this.highscores.length; i++) {
-            y += 40;
-            const text = `${i + 1}: ${this.highscores[i].playerName} - ${this.highscores[i].score}`;
-            this.writeTextToCanvas(text, 20, x, y);
-        }
-    }
     writeTextToCanvas(text, fontSize = 20, xCoordinate, yCoordinate, alignment = "center", color = "white") {
         this.ctx.font = `${fontSize}px Minecraft`;
         this.ctx.fillStyle = color;
@@ -92,10 +81,21 @@ let init = () => {
     const Asteroids = new Game(document.getElementById("canvas"));
 };
 window.addEventListener("load", init);
-class Highscorescreen {
+class GameScreen {
     constructor(canvas, ctx) {
         this.canvas = canvas;
         this.ctx = ctx;
+    }
+    writeTextToCanvas(text, fontSize = 20, xCoordinate, yCoordinate, alignment = "center", color = "white") {
+        this.ctx.font = `${fontSize}px Agency_Bold`;
+        this.ctx.fillStyle = color;
+        this.ctx.textAlign = alignment;
+        this.ctx.fillText(text, xCoordinate, yCoordinate);
+    }
+}
+class Highscorescreen extends GameScreen {
+    constructor(canvas, ctx) {
+        super(canvas, ctx);
         this.player = "Player one";
         this.score = 400;
         this.highscores = [
@@ -124,12 +124,6 @@ class Highscorescreen {
             this.writeTextToCanvas(text, 20, x, y);
         }
     }
-    writeTextToCanvas(text, fontSize = 20, xCoordinate, yCoordinate, alignment = "center", color = "white") {
-        this.ctx.font = `${fontSize}px Agency_bold`;
-        this.ctx.fillStyle = color;
-        this.ctx.textAlign = alignment;
-        this.ctx.fillText(text, xCoordinate, yCoordinate);
-    }
 }
 class KeyboardListener {
     constructor() {
@@ -154,10 +148,9 @@ KeyboardListener.KEY_UP = 38;
 KeyboardListener.KEY_RIGHT = 39;
 KeyboardListener.KEY_DOWN = 40;
 KeyboardListener.KEY_S = 83;
-class levelscreen {
+class levelscreen extends GameScreen {
     constructor(canvas, ctx, lifes, score, imageURL) {
-        this.canvas = canvas;
-        this.ctx = ctx;
+        super(canvas, ctx);
         this.lifes = lifes;
         this.scoreAmount = score;
         this.source = imageURL;
@@ -214,12 +207,6 @@ class levelscreen {
         for (let i = 0; i < this.lifes; i++) {
             this.ctx.drawImage(this.img, window.innerWidth / 20 + this.img.width * i, window.innerHeight / 20);
         }
-    }
-    writeTextToCanvas(text, fontSize = 20, xCoordinate, yCoordinate, alignment = "center", color = "white") {
-        this.ctx.font = `${fontSize}px Agency_Bold`;
-        this.ctx.fillStyle = color;
-        this.ctx.textAlign = alignment;
-        this.ctx.fillText(text, xCoordinate, yCoordinate);
     }
     loadImage(source) {
         this.img = new Image();
@@ -292,21 +279,14 @@ class Ship {
         this.fireimg.src = source;
     }
 }
-class Startscreen {
+class Startscreen extends GameScreen {
     constructor(canvas, ctx) {
-        this.canvas = canvas;
-        this.ctx = ctx;
+        super(canvas, ctx);
     }
     writeAsteroidImageToStartScreen(img) {
         const x = this.canvas.width / 2 - img.width / 2;
         const y = this.canvas.height / 5 * 2 + img.height / 2;
         this.ctx.drawImage(img, x, y);
-    }
-    writeTextToCanvas(text, fontSize = 20, xCoordinate, yCoordinate, alignment = "center", color = "white") {
-        this.ctx.font = `${fontSize}px Agency_Bold`;
-        this.ctx.fillStyle = color;
-        this.ctx.textAlign = alignment;
-        this.ctx.fillText(text, xCoordinate, yCoordinate);
     }
     loadImage(source) {
         const imageElement = new Image();

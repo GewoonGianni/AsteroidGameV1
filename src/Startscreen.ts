@@ -1,15 +1,12 @@
-class Startscreen {
-    // attributes
-    private readonly canvas: HTMLCanvasElement;
-    private readonly ctx: CanvasRenderingContext2D;
+/// <reference path="GameScreen.ts"/>
+class Startscreen extends GameScreen{
 
     // constructor
     public constructor (
         canvas: HTMLCanvasElement,
         ctx: CanvasRenderingContext2D,
     ) {
-        this.canvas = canvas;
-        this.ctx = ctx;
+        super(canvas,ctx)
     }
     // methods
     /**
@@ -23,20 +20,6 @@ class Startscreen {
         const y = this.canvas.height / 5 * 2 + img.height / 2;
 
         this.ctx.drawImage(img, x, y);
-    }
-
-    public writeTextToCanvas(
-        text: string,
-        fontSize: number = 20,
-        xCoordinate: number,
-        yCoordinate: number,
-        alignment: CanvasTextAlign = "center",
-        color: string = "white",
-    ) {
-        this.ctx.font = `${fontSize}px Agency_Bold`; // minecraft
-        this.ctx.fillStyle = color;
-        this.ctx.textAlign = alignment;
-        this.ctx.fillText(text, xCoordinate, yCoordinate);
     }
 
     private loadImage(source: string) {
