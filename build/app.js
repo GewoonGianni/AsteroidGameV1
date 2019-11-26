@@ -56,6 +56,7 @@ class Game {
                 this.currentscreen = this.levelscreen;
             }
             else if (this.levelscreen.getLifes() == 0) {
+                this.highscorescreen.setScore(this.levelscreen.getScore());
                 this.currentscreen = this.highscorescreen;
             }
             else if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_ESC)) {
@@ -71,12 +72,10 @@ class Game {
         this.canvas.height = window.innerHeight;
         this.ctx = this.canvas.getContext("2d");
         this.player = "Player one";
-        this.score = 400;
-        this.lives = 3;
         this.startscreen = new Startscreen(this.canvas, this.ctx);
         this.pausescreen = new Pausescreen(this.canvas, this.ctx);
         this.keyboardlistener = new KeyboardListener();
-        this.levelscreen = new levelscreen(this.canvas, this.ctx, 10, 4100, './assets/images/health.png');
+        this.levelscreen = new levelscreen(this.canvas, this.ctx, 10, 0, './assets/images/health.png');
         this.highscorescreen = new Highscorescreen(this.canvas, this.ctx);
         this.currentscreen = this.startscreen;
         this.loop();
@@ -118,7 +117,7 @@ class Highscorescreen extends GameScreen {
     constructor(canvas, ctx) {
         super(canvas, ctx);
         this.player = "Player one";
-        this.score = 400;
+        this.score = 0;
         this.highscores = [
             {
                 playerName: "Gianni",
@@ -149,6 +148,9 @@ class Highscorescreen extends GameScreen {
             this.writeTextToCanvas(text, 20, x, y);
         }
         this.writeTextToCanvas(`Press 'R' to restart`, 20, window.innerWidth / 2, window.innerHeight / 10 * 9, 'center', 'red');
+    }
+    setScore(score) {
+        this.score = score;
     }
 }
 class KeyboardListener {
@@ -222,6 +224,7 @@ class levelscreen extends GameScreen {
         if (hitCheckArray[0] !== 1) {
             this.hit = false;
         }
+        this.scoreAmount += 1;
         this.drawLifes();
         this.drawtext();
     }
@@ -244,6 +247,9 @@ class levelscreen extends GameScreen {
     }
     randomNumber(min, max) {
         return Math.round(Math.random() * (max - min) + min);
+    }
+    getScore() {
+        return this.scoreAmount;
     }
 }
 class Pausescreen extends GameScreen {

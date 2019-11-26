@@ -3,7 +3,7 @@ class Highscorescreen extends GameScreen{
 
     private readonly highscores: any[];
     private readonly player: string;
-    private readonly score: number;
+    private score: number;
 
     /**
      * this will construct the screen
@@ -14,7 +14,7 @@ class Highscorescreen extends GameScreen{
         super(canvas, ctx)
 
         this.player = "Player one";
-        this.score = 400;
+        this.score = 0;
 
         this.highscores = [
             {
@@ -63,5 +63,9 @@ class Highscorescreen extends GameScreen{
         }
 
         this.writeTextToCanvas(`Press 'R' to restart`, 20, window.innerWidth / 2, window.innerHeight / 10 * 9, 'center', 'red')
+    }
+
+    public setScore(score:number){
+        this.score = score;
     }
 }

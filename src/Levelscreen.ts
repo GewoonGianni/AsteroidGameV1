@@ -129,6 +129,8 @@ class levelscreen extends GameScreen{
             this.hit = false;
         }
 
+        this.scoreAmount += 1;
+
         this.drawLifes();
         this.drawtext();
     }
@@ -177,4 +179,7 @@ class levelscreen extends GameScreen{
         return Math.round(Math.random() * (max - min) + min);
     }
 
+    public getScore(){
+        return this.scoreAmount;
+    }
 }

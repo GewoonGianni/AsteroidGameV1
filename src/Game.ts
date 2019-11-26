@@ -42,8 +42,6 @@ class Game {
         this.ctx = this.canvas.getContext("2d");
 
         this.player = "Player one";
-        this.score = 400;
-        this.lives = 3;
 
         // make startscreen
         this.startscreen = new Startscreen(this.canvas, this.ctx);
@@ -56,7 +54,7 @@ class Game {
 
         //make levelscreen
         // this.levelscreen = new levelscreen(this.canvas, this.ctx, 3, 4100, './assets/images/SpaceShooterRedux/PNG/UI/PlayerLIfe1_blue.png')
-        this.levelscreen = new levelscreen(this.canvas, this.ctx, 10, 4100, './assets/images/health.png')
+        this.levelscreen = new levelscreen(this.canvas, this.ctx, 10, 0, './assets/images/health.png')
 
         // make highscorescreen
         this.highscorescreen = new Highscorescreen(this.canvas, this.ctx);
@@ -78,6 +76,7 @@ class Game {
         if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_S)) {
             this.currentscreen = this.levelscreen;
         } else if (this.levelscreen.getLifes() == 0 ) {
+            this.highscorescreen.setScore(this.levelscreen.getScore())
             this.currentscreen = this.highscorescreen;
         } else if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_ESC)){
             this.currentscreen = this.pausescreen;
