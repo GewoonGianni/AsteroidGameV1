@@ -23,6 +23,9 @@ class Game {
     // highscorescreen
     private highscorescreen: Highscorescreen;
 
+    // pausescreen
+    private pausescreen: Pausescreen;
+
     // currentscreen
     private currentscreen: any;
 
@@ -44,6 +47,9 @@ class Game {
 
         // make startscreen
         this.startscreen = new Startscreen(this.canvas, this.ctx);
+
+        // make pausescreen
+        this.pausescreen = new Pausescreen(this.canvas, this.ctx);
 
         // make keyboardlistener
         this.keyboardlistener = new KeyboardListener();
@@ -71,8 +77,10 @@ class Game {
 
         if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_S)) {
             this.currentscreen = this.levelscreen;
-        } else if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_ESC) || this.levelscreen.getLifes() == 0 ) {
+        } else if (this.levelscreen.getLifes() == 0 ) {
             this.currentscreen = this.highscorescreen;
+        } else if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_ESC)){
+            this.currentscreen = this.pausescreen;
         }
         
         requestAnimationFrame(this.loop);

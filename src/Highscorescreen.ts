@@ -18,6 +18,10 @@ class Highscorescreen extends GameScreen{
 
         this.highscores = [
             {
+                playerName: "Gianni",
+                score: 69420,
+            },
+            {
                 playerName: "Loek",
                 score: 40000,
             },

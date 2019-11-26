@@ -55,8 +55,11 @@ class Game {
             if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_S)) {
                 this.currentscreen = this.levelscreen;
             }
-            else if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_ESC) || this.levelscreen.getLifes() == 0) {
+            else if (this.levelscreen.getLifes() == 0) {
                 this.currentscreen = this.highscorescreen;
+            }
+            else if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_ESC)) {
+                this.currentscreen = this.pausescreen;
             }
             requestAnimationFrame(this.loop);
         };
@@ -68,6 +71,7 @@ class Game {
         this.score = 400;
         this.lives = 3;
         this.startscreen = new Startscreen(this.canvas, this.ctx);
+        this.pausescreen = new Pausescreen(this.canvas, this.ctx);
         this.keyboardlistener = new KeyboardListener();
         this.levelscreen = new levelscreen(this.canvas, this.ctx, 10, 4100, './assets/images/health.png');
         this.highscorescreen = new Highscorescreen(this.canvas, this.ctx);
@@ -113,6 +117,10 @@ class Highscorescreen extends GameScreen {
         this.player = "Player one";
         this.score = 400;
         this.highscores = [
+            {
+                playerName: "Gianni",
+                score: 69420,
+            },
             {
                 playerName: "Loek",
                 score: 40000,
@@ -231,6 +239,28 @@ class levelscreen extends GameScreen {
     }
     randomNumber(min, max) {
         return Math.round(Math.random() * (max - min) + min);
+    }
+}
+class Pausescreen extends GameScreen {
+    constructor(canvas, ctx) {
+        super(canvas, ctx);
+    }
+    drawScreen() {
+        this.writeTextToCanvas('PAUSE', 250, window.innerWidth / 2, window.innerHeight / 3, 'center', 'white');
+        this.drawPause();
+        this.writeTextToCanvas(`Press 'S' to continue`, 20, window.innerWidth / 2, window.innerHeight / 10 * 9, 'center', 'white');
+    }
+    drawPause() {
+        this.ctx.beginPath();
+        this.ctx.lineWidth = 50;
+        this.ctx.strokeStyle = "white";
+        this.ctx.rect(window.innerWidth / 2 - 75, window.innerHeight / 2, 40, 200);
+        this.ctx.stroke();
+        this.ctx.beginPath();
+        this.ctx.lineWidth = 50;
+        this.ctx.strokeStyle = "white";
+        this.ctx.rect(window.innerWidth / 2 + 40, window.innerHeight / 2, 40, 200);
+        this.ctx.stroke();
     }
 }
 class Ship extends GameEntity {
