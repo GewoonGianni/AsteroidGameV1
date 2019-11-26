@@ -74,6 +74,10 @@ class Ship extends GameEntity{
 
     }
 
+    /**
+     * this will check if the ship is colliding with an object
+     * @param GameEntity this is the object
+     */
     public isColliding(GameEntity: GameEntity):boolean {
         if ((this.yPos + this.img.height > GameEntity.getYpos()) 
         && (this.yPos < (GameEntity.getYpos() + GameEntity.getIMGheight())) 
@@ -85,14 +89,26 @@ class Ship extends GameEntity{
         return false
     }
 
+    /**
+     * this will return the number in radian
+     * @param degree the number in degrees
+     */
     private degreeToRadion(degree: number) {
         return Math.PI / 180 * degree;
     }
 
+    /**
+     * this is for drawing the weird explosion
+     * @param ctx the rendering context
+     */
     public fire(ctx: CanvasRenderingContext2D){
         ctx.drawImage(this.fireimg, this.xPos + this.img.width / 2 - 47.5, this.yPos + this.img.height / 2 - 47.5)
     }
 
+    /**
+     * the function that will load the explosion before drawing it
+     * @param source the path to the fire image
+     */
     private loadFireImage(source: string) {
         this.fireimg = new Image();
         // Now, set the src to start loading the image

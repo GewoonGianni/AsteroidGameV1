@@ -10,7 +10,6 @@ class Game {
     private readonly player: string;
     private readonly score: number;
     private readonly lives: number;
-    private readonly highscores: any[]; // TODO: do not use 'any'
 
     // keyboardListener
     private keyboardlistener: KeyboardListener;
@@ -27,6 +26,10 @@ class Game {
     // currentscreen
     private currentscreen: any;
 
+    /**
+     * this will construct the game
+     * @param canvasId the canvas on the index.html
+     */
     public constructor(canvasId: HTMLCanvasElement) {
         // Construct all of the canvas
         this.canvas = canvasId;
@@ -74,8 +77,6 @@ class Game {
         
         requestAnimationFrame(this.loop);
     }
-
-    // -------Generic canvas methods ----------------------------------
 
     /**
      * Writes text to the canvas

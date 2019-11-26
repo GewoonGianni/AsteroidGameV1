@@ -2,6 +2,11 @@ class GameScreen {
     protected canvas: HTMLCanvasElement;
     protected ctx: CanvasRenderingContext2D;
 
+    /**
+     * the gamescreen constructor
+     * @param canvas the canvas
+     * @param ctx the rendering context
+     */
     public constructor (
         canvas: HTMLCanvasElement,
         ctx: CanvasRenderingContext2D,

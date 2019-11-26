@@ -1,10 +1,15 @@
 /// <reference path="GameScreen.ts"/>
 class Highscorescreen extends GameScreen{
 
-    private readonly highscores: any[]; // TODO: do not use 'any': write an interface!
+    private readonly highscores: any[];
     private readonly player: string;
     private readonly score: number;
 
+    /**
+     * this will construct the screen
+     * @param canvas the canvas
+     * @param ctx the rendering context
+     */
     public constructor(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
         super(canvas, ctx)
 
@@ -27,6 +32,9 @@ class Highscorescreen extends GameScreen{
         ];
     }
 
+    /**
+     * this is the main function an will draw the screen
+     */
     public drawScreen() {
         const x = this.canvas.width / 2;
         let y = this.canvas.height / 2;
