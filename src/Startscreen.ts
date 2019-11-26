@@ -1,5 +1,5 @@
 /// <reference path="GameScreen.ts"/>
-class Startscreen extends GameScreen{
+class Startscreen extends GameScreen {
 
     // constructor
     public constructor (
@@ -56,5 +56,8 @@ class Startscreen extends GameScreen{
 
         // nice text in bottom of screen
         this.writeTextToCanvas('Press S to start', 30, window.innerWidth / 2, window.innerHeight / 20 * 19, 'center', 'red')
+
+        // control text
+        this.writeTextToCanvas('press C for controls', 30, window.innerWidth / 10 * 9, window.innerHeight / 20, 'center', 'white')
     }
 }

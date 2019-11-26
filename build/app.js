@@ -32,8 +32,10 @@ class Asteroid extends GameEntity {
             (this.xPos - this.img.width / 2 < 0)) {
             this.xVel = -this.xVel;
         }
-        if (this.yPos + this.img.height / 2 > canvas.height ||
-            this.yPos - this.img.height / 2 < 0) {
+        if (this.yPos + this.img.height / 2 > canvas.height && this.yVel > 0) {
+            this.yVel = -this.yVel;
+        }
+        if (this.yPos - this.img.height / 2 < 0 && this.yVel < 0) {
             this.yVel = -this.yVel;
         }
         this.xPos += this.xVel;
@@ -47,6 +49,61 @@ class Asteroid extends GameEntity {
         }
     }
 }
+class Bullet extends GameEntity {
+    constructor(imgURL, xPos, yPos, xVel, yVel, rotation) {
+        super(imgURL, xPos, yPos, xVel, yVel);
+        this.loadImage(imgURL);
+        this.rotation = rotation;
+    }
+    draw(ctx) {
+        if (this.img.naturalWidth > 0) {
+            ctx.save();
+            ctx.translate(this.xPos + 0.5 * this.img.width, this.yPos + 0.5 * this.img.height);
+            ctx.rotate(this.rotation);
+            ctx.translate(-(this.xPos + 0.5 * this.img.width), -(this.yPos + 0.5 * this.img.height));
+            ctx.drawImage(this.img, this.xPos, this.yPos);
+            ctx.restore();
+        }
+    }
+    move() {
+        this.yPos -= Math.cos(this.rotation) * this.yVel;
+        this.xPos += Math.sin(this.rotation) * this.xVel;
+    }
+    isColliding(GameEntity) {
+        if ((this.yPos + this.img.height > GameEntity.getYpos())
+            && (this.yPos < (GameEntity.getYpos() + GameEntity.getIMGheight()))
+            && ((this.xPos + this.img.width) > GameEntity.getXpos())
+            && (this.xPos < (GameEntity.getXpos() + GameEntity.getIMGwidth()))) {
+            return true;
+        }
+        return false;
+    }
+}
+class GameScreen {
+    constructor(canvas, ctx) {
+        this.canvas = canvas;
+        this.ctx = ctx;
+    }
+    writeTextToCanvas(text, fontSize = 20, xCoordinate, yCoordinate, alignment = "center", color = "white") {
+        this.ctx.font = `${fontSize}px Agency_Bold`;
+        this.ctx.fillStyle = color;
+        this.ctx.textAlign = alignment;
+        this.ctx.fillText(text, xCoordinate, yCoordinate);
+    }
+}
+class Controlsscreen extends GameScreen {
+    constructor(canvas, ctx) {
+        super(canvas, ctx);
+    }
+    drawScreen() {
+        this.writeTextToCanvas(`up arrow - go forward`, 30, window.innerWidth / 2, window.innerHeight / 20 * 3, 'center', 'white');
+        this.writeTextToCanvas(`left arrow - turn left`, 30, window.innerWidth / 2, window.innerHeight / 20 * 4, 'center', 'white');
+        this.writeTextToCanvas(`right arrow - turn right`, 30, window.innerWidth / 2, window.innerHeight / 20 * 5, 'center', 'white');
+        this.writeTextToCanvas(`HOLD spacebar - shoot`, 30, window.innerWidth / 2, window.innerHeight / 20 * 7, 'center', 'white');
+        this.writeTextToCanvas(`esc - pause`, 30, window.innerWidth / 2, window.innerHeight / 20 * 9, 'center', 'white');
+        this.writeTextToCanvas(`Press S to start  -  Press R to go back to the title screen`, 30, window.innerWidth / 2, window.innerHeight / 20 * 19, 'center', 'red');
+    }
+}
 class Game {
     constructor(canvasId) {
         this.loop = () => {
@@ -55,14 +112,17 @@ class Game {
             if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_S)) {
                 this.currentscreen = this.levelscreen;
             }
-            else if (this.levelscreen.getLifes() == 0) {
+            else if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_C) && this.currentscreen == this.startscreen) {
+                this.currentscreen = this.controlsscreen;
+            }
+            else if (this.levelscreen.getLifes() <= 0) {
                 this.highscorescreen.setScore(this.levelscreen.getScore());
                 this.currentscreen = this.highscorescreen;
             }
-            else if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_ESC)) {
+            else if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_ESC) && this.currentscreen == this.levelscreen) {
                 this.currentscreen = this.pausescreen;
             }
-            if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_R)) {
+            if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_R) && (this.currentscreen == this.highscorescreen || this.currentscreen == this.controlsscreen)) {
                 location.reload();
             }
             requestAnimationFrame(this.loop);
@@ -74,17 +134,12 @@ class Game {
         this.player = "Player one";
         this.startscreen = new Startscreen(this.canvas, this.ctx);
         this.pausescreen = new Pausescreen(this.canvas, this.ctx);
+        this.controlsscreen = new Controlsscreen(this.canvas, this.ctx);
         this.keyboardlistener = new KeyboardListener();
         this.levelscreen = new levelscreen(this.canvas, this.ctx, 10, 0, './assets/images/health.png');
         this.highscorescreen = new Highscorescreen(this.canvas, this.ctx);
         this.currentscreen = this.startscreen;
         this.loop();
-    }
-    writeTextToCanvas(text, fontSize = 20, xCoordinate, yCoordinate, alignment = "center", color = "white") {
-        this.ctx.font = `${fontSize}px Minecraft`;
-        this.ctx.fillStyle = color;
-        this.ctx.textAlign = alignment;
-        this.ctx.fillText(text, xCoordinate, yCoordinate);
     }
     loadImage(source, callback) {
         const imageElement = new Image();
@@ -101,18 +156,6 @@ let init = () => {
     const Asteroids = new Game(document.getElementById("canvas"));
 };
 window.addEventListener("load", init);
-class GameScreen {
-    constructor(canvas, ctx) {
-        this.canvas = canvas;
-        this.ctx = ctx;
-    }
-    writeTextToCanvas(text, fontSize = 20, xCoordinate, yCoordinate, alignment = "center", color = "white") {
-        this.ctx.font = `${fontSize}px Agency_Bold`;
-        this.ctx.fillStyle = color;
-        this.ctx.textAlign = alignment;
-        this.ctx.fillText(text, xCoordinate, yCoordinate);
-    }
-}
 class Highscorescreen extends GameScreen {
     constructor(canvas, ctx) {
         super(canvas, ctx);
@@ -147,7 +190,7 @@ class Highscorescreen extends GameScreen {
             const text = `${i + 1}: ${this.highscores[i].playerName} - ${this.highscores[i].score}`;
             this.writeTextToCanvas(text, 20, x, y);
         }
-        this.writeTextToCanvas(`Press 'R' to restart`, 20, window.innerWidth / 2, window.innerHeight / 10 * 9, 'center', 'red');
+        this.writeTextToCanvas(`Press R to restart`, 30, window.innerWidth / 2, window.innerHeight / 20 * 19, 'center', 'red');
     }
     setScore(score) {
         this.score = score;
@@ -177,6 +220,7 @@ KeyboardListener.KEY_RIGHT = 39;
 KeyboardListener.KEY_DOWN = 40;
 KeyboardListener.KEY_S = 83;
 KeyboardListener.KEY_R = 82;
+KeyboardListener.KEY_C = 67;
 class levelscreen extends GameScreen {
     constructor(canvas, ctx, lifes, score, imageURL) {
         super(canvas, ctx);
@@ -185,18 +229,31 @@ class levelscreen extends GameScreen {
         this.source = imageURL;
         this.loadImage(imageURL);
         this.loadBarImage('./assets/images/healthbar.png');
+        this.keyListener = new KeyboardListener();
+        this.framecounter = 0;
+        this.maxAsteroids = 15;
         this.ship = new Ship("./assets/images/avengerShip.png", this.canvas.width / 2, this.canvas.height / 2, 5, 5, new KeyboardListener());
-        const asteroidFilenames = [
+        this.asteroidFilenames = [
             "./assets/images/asteroids/asteroid1.png",
             "./assets/images/asteroids/asteroid2.png",
             "./assets/images/asteroids/asteroid3.png",
             "./assets/images/asteroids/astroid1.png",
             "./assets/images/asteroids/astroid2.png",
         ];
+        this.randomLocation = [
+            canvas.height + 130,
+            -130,
+        ];
+        let j = 0;
+        this.bullets = [];
         this.asteroids = [];
-        for (let i = 0; i < this.randomNumber(5, 20); i++) {
-            const randomIndex = this.randomNumber(0, asteroidFilenames.length);
-            this.asteroids.push(new Asteroid(asteroidFilenames[randomIndex], this.randomNumber(50, this.canvas.width - 121), this.randomNumber(50, this.canvas.height - 99), this.randomNumber(1, 10), this.randomNumber(1, 10)));
+        for (let i = 0; i < this.maxAsteroids; i++) {
+            const randomIndex = j;
+            j++;
+            if (j == 5) {
+                j = 0;
+            }
+            this.asteroids.push(new Asteroid(this.asteroidFilenames[randomIndex], this.randomNumber(121, canvas.width - 121), this.randomLocation[this.randomNumber(0, 1)], this.randomNumber(1, 5), this.randomNumber(1, 5)));
         }
         this.hit = false;
     }
@@ -218,15 +275,39 @@ class levelscreen extends GameScreen {
         });
         this.ship.move(this.canvas);
         this.ship.draw(this.ctx);
+        if (this.keyListener.isKeyDown(KeyboardListener.KEY_SPACE) && this.framecounter % 20 == 0) {
+            this.bullets.push(new Bullet('./assets/images/laser.png', this.ship.getXpos() + this.ship.getIMGwidth() / 2 + (Math.sin(this.ship.getRotation()) * 50), this.ship.getYpos() + this.ship.getIMGheight() / 2 - (Math.cos(this.ship.getRotation()) * 50), 10, 10, this.ship.getRotation()));
+        }
+        let index = 0;
+        this.bullets.forEach((bullet) => {
+            bullet.move();
+            bullet.draw(this.ctx);
+            if (bullet.getXpos() < -10 || bullet.getXpos() > window.innerWidth + 10 || bullet.getYpos() < -10 || bullet.getYpos() > window.innerHeight + 10) {
+                this.bullets.splice(index, 1);
+            }
+            for (let i = 0; i < this.asteroids.length; i++) {
+                const element = this.asteroids[i];
+                if (bullet.isColliding(element)) {
+                    this.bullets.splice(index, 1);
+                    this.asteroids.splice(i, 1);
+                }
+            }
+            index++;
+        });
         if (this.hit == true) {
             this.ship.fire(this.ctx);
         }
         if (hitCheckArray[0] !== 1) {
             this.hit = false;
         }
+        if (this.asteroids.length < this.maxAsteroids) {
+            this.scoreAmount += 50;
+            this.asteroids.push(new Asteroid(this.asteroidFilenames[this.randomNumber(0, 4)], this.randomNumber(121, this.canvas.width - 121), this.randomLocation[this.randomNumber(0, 1)], this.randomNumber(1, 5), this.randomNumber(1, 5)));
+        }
         this.scoreAmount += 1;
         this.drawLifes();
         this.drawtext();
+        this.framecounter++;
     }
     drawtext() {
         this.writeTextToCanvas(`Score: ${this.scoreAmount}`, 20, window.innerWidth / 20 * 19, window.innerHeight / 20, "right", 'white');
@@ -258,20 +339,7 @@ class Pausescreen extends GameScreen {
     }
     drawScreen() {
         this.writeTextToCanvas('PAUSE', 250, window.innerWidth / 2, window.innerHeight / 3, 'center', 'white');
-        this.drawPause();
-        this.writeTextToCanvas(`Press 'S' to continue`, 20, window.innerWidth / 2, window.innerHeight / 10 * 9, 'center', 'white');
-    }
-    drawPause() {
-        this.ctx.beginPath();
-        this.ctx.lineWidth = 50;
-        this.ctx.strokeStyle = "white";
-        this.ctx.rect(window.innerWidth / 2 - 75, window.innerHeight / 2, 40, 200);
-        this.ctx.stroke();
-        this.ctx.beginPath();
-        this.ctx.lineWidth = 50;
-        this.ctx.strokeStyle = "white";
-        this.ctx.rect(window.innerWidth / 2 + 40, window.innerHeight / 2, 40, 200);
-        this.ctx.stroke();
+        this.writeTextToCanvas(`Press S to continue`, 30, window.innerWidth / 2, window.innerHeight / 20 * 19, 'center', 'white');
     }
 }
 class Ship extends GameEntity {
@@ -334,6 +402,9 @@ class Ship extends GameEntity {
         this.fireimg = new Image();
         this.fireimg.src = source;
     }
+    getRotation() {
+        return this.rotation;
+    }
 }
 class Startscreen extends GameScreen {
     constructor(canvas, ctx) {
@@ -353,6 +424,7 @@ class Startscreen extends GameScreen {
         this.ctx.drawImage(this.loadImage('./assets/images/SC.png'), window.innerWidth / 3 * 2 - 175, window.innerHeight / 3 - 175);
         this.writeTextToCanvas('THE FINAL VERSION', 60, window.innerWidth / 3 * 2, window.innerHeight / 3 * 2 - 30, 'center', 'white');
         this.writeTextToCanvas('Press S to start', 30, window.innerWidth / 2, window.innerHeight / 20 * 19, 'center', 'red');
+        this.writeTextToCanvas('press C for controls', 30, window.innerWidth / 10 * 9, window.innerHeight / 20, 'center', 'white');
     }
 }
 //# sourceMappingURL=app.js.map

@@ -1,5 +1,5 @@
 /// <reference path="GameScreen.ts"/>
-class Highscorescreen extends GameScreen{
+class Highscorescreen extends GameScreen {
 
     private readonly highscores: any[];
     private readonly player: string;
@@ -62,7 +62,7 @@ class Highscorescreen extends GameScreen{
             this.writeTextToCanvas(text, 20, x, y);
         }
 
-        this.writeTextToCanvas(`Press 'R' to restart`, 20, window.innerWidth / 2, window.innerHeight / 10 * 9, 'center', 'red')
+        this.writeTextToCanvas(`Press R to restart`, 30, window.innerWidth / 2, window.innerHeight / 20 * 19, 'center', 'red')
     }
 
     /**

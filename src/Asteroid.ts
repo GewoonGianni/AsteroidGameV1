@@ -36,8 +36,12 @@ class Asteroid extends GameEntity{
             this.xVel = -this.xVel;
         }
         if (
-            this.yPos + this.img.height / 2 > canvas.height ||
-            this.yPos - this.img.height / 2 < 0
+            this.yPos + this.img.height / 2 > canvas.height && this.yVel > 0
+        ) {
+            this.yVel = -this.yVel;
+        }
+        if (
+            this.yPos - this.img.height / 2 < 0 && this.yVel < 0
         ) {
             this.yVel = -this.yVel;
         }

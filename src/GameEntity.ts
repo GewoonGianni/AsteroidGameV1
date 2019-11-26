@@ -36,7 +36,7 @@ class GameEntity {
      *
      * @param {string} source - the name of the image file to load
      */
-    private loadImage(source: string) {
+    public loadImage(source: string) {
         this.img = new Image();
         // Now, set the src to start loading the image
         this.img.src = source;

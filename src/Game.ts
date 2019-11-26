@@ -26,6 +26,9 @@ class Game {
     // pausescreen
     private pausescreen: Pausescreen;
 
+    // controlsscreen
+    private controlsscreen: Controlsscreen;
+
     // currentscreen
     private currentscreen: any;
 
@@ -48,6 +51,9 @@ class Game {
 
         // make pausescreen
         this.pausescreen = new Pausescreen(this.canvas, this.ctx);
+
+        // make controlsscreen
+        this.controlsscreen = new Controlsscreen(this.canvas, this.ctx);
 
         // make keyboardlistener
         this.keyboardlistener = new KeyboardListener();
@@ -75,40 +81,19 @@ class Game {
 
         if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_S)) {
             this.currentscreen = this.levelscreen;
-        } else if (this.levelscreen.getLifes() == 0 ) {
+        } else if(this.keyboardlistener.isKeyDown(KeyboardListener.KEY_C) && this.currentscreen == this.startscreen){
+            this.currentscreen = this.controlsscreen;
+        } else if (this.levelscreen.getLifes() <= 0 ) {
             this.highscorescreen.setScore(this.levelscreen.getScore())
             this.currentscreen = this.highscorescreen;
-        } else if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_ESC)){
+        } else if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_ESC) && this.currentscreen == this.levelscreen){
             this.currentscreen = this.pausescreen;
         } 
-        if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_R)){
+        if (this.keyboardlistener.isKeyDown(KeyboardListener.KEY_R) && (this.currentscreen == this.highscorescreen || this.currentscreen == this.controlsscreen)){
             location.reload();
         }
         
         requestAnimationFrame(this.loop);
-    }
-
-    /**
-     * Writes text to the canvas
-     * @param {string} text - Text to write
-     * @param {number} fontSize - Font size in pixels
-     * @param {number} xCoordinate - Horizontal coordinate in pixels
-     * @param {number} yCoordinate - Vertical coordinate in pixels
-     * @param {string} alignment - Where to align the text
-     * @param {string} color - The color of the text
-     */
-    public writeTextToCanvas(
-        text: string,
-        fontSize: number = 20,
-        xCoordinate: number,
-        yCoordinate: number,
-        alignment: CanvasTextAlign = "center",
-        color: string = "white",
-    ) {
-        this.ctx.font = `${fontSize}px Minecraft`;
-        this.ctx.fillStyle = color;
-        this.ctx.textAlign = alignment;
-        this.ctx.fillText(text, xCoordinate, yCoordinate);
     }
 
     /**

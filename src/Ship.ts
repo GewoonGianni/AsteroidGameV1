@@ -1,5 +1,5 @@
 /// <reference path="GameEntity.ts"/>
-class Ship extends GameEntity{
+class Ship extends GameEntity {
     private KeyboardListener: KeyboardListener;
     private rotation: number = 0;
     private fireimg: HTMLImageElement;
@@ -55,11 +55,11 @@ class Ship extends GameEntity{
     }
 
     /**
-     * 
+     * draw the ship
      * @param ctx 
      */
     public draw(ctx: CanvasRenderingContext2D) {
-        // We want the center of the image to be the position of this asteroid
+        // We want the center of the image to be the position of this ship
         if (this.img.naturalWidth > 0) {
             ctx.save();
 
@@ -112,5 +112,9 @@ class Ship extends GameEntity{
         this.fireimg = new Image();
         // Now, set the src to start loading the image
         this.fireimg.src = source;
+    }
+
+    public getRotation(){
+        return this.rotation;
     }
 }

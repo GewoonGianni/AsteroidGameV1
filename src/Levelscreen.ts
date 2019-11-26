@@ -1,5 +1,5 @@
 /// <reference path="GameScreen.ts"/>
-class levelscreen extends GameScreen{
+class levelscreen extends GameScreen {
 
     private lifes: number;
 
@@ -16,9 +16,26 @@ class levelscreen extends GameScreen{
     // Asteroids
     private asteroids: Asteroid[];
 
-
     // ship
     private ship: Ship;
+
+    // bullet
+    private bullets: Bullet[];
+
+    // files
+    private asteroidFilenames: string[];
+
+    // random locations
+    private randomLocation: number[];
+
+    // keylistener
+    private keyListener: KeyboardListener;
+
+    // framecounter
+    private framecounter: number;
+
+    // max spawnable asteroids
+    private maxAsteroids: number;
 
     /**
      * this will construct the life screen
@@ -47,6 +64,12 @@ class levelscreen extends GameScreen{
 
         this.loadBarImage('./assets/images/healthbar.png')
 
+        this.keyListener = new KeyboardListener();
+
+        this.framecounter = 0;
+
+        this.maxAsteroids = 15;
+
         // draw player ship
         // this.ship = new Ship("./assets/images/SpaceShooterRedux/PNG/playerShip1_blue.png", this.canvas.width / 2 - 22, this.canvas.height / 2 - 60, 8, 8, new KeyboardListener())
 
@@ -65,7 +88,7 @@ class levelscreen extends GameScreen{
         //     "./assets/images/SpaceShooterRedux/PNG/Meteors/meteorBrown_tiny2.png",
         // ];
 
-        const asteroidFilenames: string[] = [
+        this.asteroidFilenames = [
             "./assets/images/asteroids/asteroid1.png",
             "./assets/images/asteroids/asteroid2.png",
             "./assets/images/asteroids/asteroid3.png",
@@ -73,17 +96,38 @@ class levelscreen extends GameScreen{
             "./assets/images/asteroids/astroid2.png",
         ];
 
+        // const asteroidFilenames: string[] = [
+        //     "./assets/images/asteroids/asteroid1.png",
+        //     "./assets/images/asteroids/asteroid2.png",
+        //     "./assets/images/asteroids/asteroid3.png",
+        //     "./assets/images/asteroids/astroid1.png",
+        //     "./assets/images/asteroids/astroid2.png",
+        // ];
+
+        this.randomLocation= [
+            canvas.height + 130,
+            -130,
+        ]
+
+        let j:number = 0;
+
+        this.bullets = [];
+
         this.asteroids = [];
-        for (let i = 0; i < this.randomNumber(5, 20); i++) {
-            const randomIndex = this.randomNumber(0, asteroidFilenames.length);
+        for (let i = 0; i < this.maxAsteroids; i++) {
+            const randomIndex = j;
+            j++
+            if(j == 5){
+                j = 0;
+            }
 
             this.asteroids.push(
                 new Asteroid(
-                    asteroidFilenames[randomIndex],
-                    this.randomNumber(50, this.canvas.width - 121),
-                    this.randomNumber(50, this.canvas.height - 99),
-                    this.randomNumber(1, 10),
-                    this.randomNumber(1, 10),
+                    this.asteroidFilenames[randomIndex],
+                    this.randomNumber(121, canvas.width -121),
+                    this.randomLocation[this.randomNumber(0,1)],
+                    this.randomNumber(1, 5),
+                    this.randomNumber(1, 5),
                 ),
             );
         }
@@ -121,18 +165,62 @@ class levelscreen extends GameScreen{
         this.ship.move(this.canvas);
         this.ship.draw(this.ctx);
 
+        // new bullet
+        if(this.keyListener.isKeyDown(KeyboardListener.KEY_SPACE) && this.framecounter % 20 == 0){
+            this.bullets.push(new Bullet('./assets/images/laser.png', this.ship.getXpos() + this.ship.getIMGwidth() / 2 + (Math.sin(this.ship.getRotation()) * 50), this.ship.getYpos() + this.ship.getIMGheight() / 2 - (Math.cos(this.ship.getRotation()) * 50), 10,10, this.ship.getRotation()));
+        }
+
+        // bullet stuff 
+        let index = 0
+        this.bullets.forEach((bullet: Bullet) => {
+            bullet.move();
+            bullet.draw(this.ctx);
+
+            if(bullet.getXpos() < -10 || bullet.getXpos() > window.innerWidth + 10 || bullet.getYpos() < -10 || bullet.getYpos() > window.innerHeight + 10){
+                this.bullets.splice(index, 1);
+            }
+            
+            for (let i = 0; i < this.asteroids.length; i++) {
+                const element = this.asteroids[i];
+
+                if(bullet.isColliding(element)){
+                    this.bullets.splice(index, 1)
+                    this.asteroids.splice(i, 1);
+                }
+            }
+            index++;
+        });
+ 
+        // fire
         if(this.hit == true) {
             this.ship.fire(this.ctx);
         }
 
+        // check if still getting hit
         if (hitCheckArray[0] !== 1) {
             this.hit = false;
         }
 
+        // respawn
+        if(this.asteroids.length < this.maxAsteroids){
+            this.scoreAmount += 50;
+            this.asteroids.push(
+                new Asteroid(
+                    this.asteroidFilenames[this.randomNumber(0,4)],
+                    this.randomNumber(121, this.canvas.width -121),
+                    this.randomLocation[this.randomNumber(0,1)],
+                    this.randomNumber(1, 5),
+                    this.randomNumber(1, 5),
+                ),
+            );
+        }
+        
         this.scoreAmount += 1;
 
         this.drawLifes();
         this.drawtext();
+
+        this.framecounter ++;
     }
 
     /**
