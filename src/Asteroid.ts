@@ -1,10 +1,6 @@
-class Asteroid {
+/// <reference path="GameEntity.ts"/>
+class Asteroid extends GameEntity{
 
-    private xPos: number;
-    private yPos: number;
-    private xVel: number;
-    private yVel: number;
-    private img: HTMLImageElement;
     asteroid: number[];
 
     /**
@@ -23,11 +19,7 @@ class Asteroid {
         xVel: number,
         yVel: number,
     ) {
-        this.xPos = xPos;
-        this.yPos = yPos;
-        this.xVel = xVel;
-        this.yVel = yVel;
-        this.loadImage(imgUrl);
+        super(imgUrl, xPos, yPos, xVel, yVel)
     }
 
     /**
@@ -70,22 +62,5 @@ class Asteroid {
         if (this.img.naturalWidth > 0) {
             ctx.drawImage(this.img, x, y);
         }
-    }
-
-    /**
-     * Loads an image file into the DOM. The image is stored in the img
-     * attribute of this class before it is loaded. This means that this.img
-     * always holds an HTMLImageElement, but it might be empty
-     *
-     * @param {string} source - the name of the image file to load
-     */
-    private loadImage(source: string) {
-        this.img = new Image();
-        // Now, set the src to start loading the image
-        this.img.src = source;
-    }
-
-    public collisionBox():Array<number> {
-        return [this.xPos, this.yPos, this.img.width / 2]
     }
 }

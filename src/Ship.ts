@@ -1,9 +1,5 @@
-class Ship {
-    private xPos: number;
-    private yPos: number;
-    private xVel: number;
-    private yVel: number;
-    private img: HTMLImageElement;
+/// <reference path="GameEntity.ts"/>
+class Ship extends GameEntity{
     private KeyboardListener: KeyboardListener;
     private rotation: number = 0;
     private fireimg: HTMLImageElement;
@@ -15,14 +11,10 @@ class Ship {
      * @param yPos the position of the ship on the y-axis
      */
     public constructor(imgURL: string, xPos: number, yPos: number, xVel: number, yVel: number, keyboardListener: KeyboardListener) {
-        this.xPos = xPos;
-        this.yPos = yPos;
-        this.xVel = xVel;
-        this.yVel = yVel;
+        super(imgURL, xPos, yPos, xVel, yVel)
 
         this.KeyboardListener = keyboardListener;
 
-        this.loadImage(imgURL);
         this.loadFireImage('./assets/images/explosion.png');
     }
 
@@ -82,18 +74,12 @@ class Ship {
 
     }
 
-    private loadImage(source: string) {
-        this.img = new Image();
-        // Now, set the src to start loading the image
-        this.img.src = source;
-    }
+    // public isColliding():boolean {
+
+    // }
 
     private degreeToRadion(degree: number) {
         return Math.PI / 180 * degree;
-    }
-
-    public collisionBox():Array<number> {
-        return [this.xPos, this.yPos, 80]
     }
 
     public fire(ctx: CanvasRenderingContext2D){

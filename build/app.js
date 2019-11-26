@@ -1,10 +1,22 @@
-class Asteroid {
+class GameEntity {
     constructor(imgUrl, xPos, yPos, xVel, yVel) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.xVel = xVel;
         this.yVel = yVel;
         this.loadImage(imgUrl);
+    }
+    loadImage(source) {
+        this.img = new Image();
+        this.img.src = source;
+    }
+    collisionBox() {
+        return [this.xPos, this.yPos, this.img.width / 2];
+    }
+}
+class Asteroid extends GameEntity {
+    constructor(imgUrl, xPos, yPos, xVel, yVel) {
+        super(imgUrl, xPos, yPos, xVel, yVel);
     }
     move(canvas) {
         if ((this.xPos + this.img.width / 2 > canvas.width) ||
@@ -24,13 +36,6 @@ class Asteroid {
         if (this.img.naturalWidth > 0) {
             ctx.drawImage(this.img, x, y);
         }
-    }
-    loadImage(source) {
-        this.img = new Image();
-        this.img.src = source;
-    }
-    collisionBox() {
-        return [this.xPos, this.yPos, this.img.width / 2];
     }
 }
 class Game {
@@ -216,15 +221,11 @@ class levelscreen extends GameScreen {
         return Math.round(Math.random() * (max - min) + min);
     }
 }
-class Ship {
+class Ship extends GameEntity {
     constructor(imgURL, xPos, yPos, xVel, yVel, keyboardListener) {
+        super(imgURL, xPos, yPos, xVel, yVel);
         this.rotation = 0;
-        this.xPos = xPos;
-        this.yPos = yPos;
-        this.xVel = xVel;
-        this.yVel = yVel;
         this.KeyboardListener = keyboardListener;
-        this.loadImage(imgURL);
         this.loadFireImage('./assets/images/explosion.png');
     }
     move(canvas) {
@@ -261,15 +262,8 @@ class Ship {
             ctx.restore();
         }
     }
-    loadImage(source) {
-        this.img = new Image();
-        this.img.src = source;
-    }
     degreeToRadion(degree) {
         return Math.PI / 180 * degree;
-    }
-    collisionBox() {
-        return [this.xPos, this.yPos, 80];
     }
     fire(ctx) {
         ctx.drawImage(this.fireimg, this.xPos + this.img.width / 2 - 47.5, this.yPos + this.img.height / 2 - 47.5);
